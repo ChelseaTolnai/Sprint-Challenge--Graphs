@@ -21,15 +21,6 @@ player = Player("Name", world.startingRoom)
 
 
 # FILL THIS IN
-traversalPath = ['n', 's']
-"""
-To solve this path, you'll want to construct your own traversal graph. You start in room 0, which contains exits ['n', 's', 'w', 'e']. Your starting graph should look something like this:
-{
-  0: {'n': '?', 's': 5, 'w': '?', 'e': '?'},
-  5: {'n': 0, 's': '?', 'e': '?'}
-}
-"""
-traversalGraph = {}
 """
 You can find the path to the shortest unexplored room by using a breadth-first search for a room with a '?' for an exit. If you use the bfs_path code from the homework, you will need to make a few modifications.
 
@@ -37,6 +28,7 @@ Instead of searching for a target vertex, you are searching for an exit with a '
 
 BFS will return the path as a list of room IDs. You will need to convert this to a list of n/s/e/w directions before you can add it to your traversal path.
 """
+
 # Using bfs_path as opposed to depth first search because the final goal is to get the shortest path.
 
 class Queue():
@@ -52,6 +44,8 @@ class Queue():
     def size(self):
         return len(self.queue)
 
+# Finds smallest path to room with a '?' or unvisted direction 
+
 class TraversalGraph:
     def __init__(self, traversalGraph):
         self.traversalGraph = traversalGraph
@@ -66,14 +60,56 @@ class TraversalGraph:
             for v in self.traversalGraph[u[0]][1]:
                 next_room = self.traversalGraph[u[0]][1][v]
                 path = u[1] + [next_room]
-                if next_room == 221:
+                if next_room == '?':
                     return path
                 else:
                     queue.enqueue((next_room, path))
 
+
+# Testing bfs functionality with givien roomGraph. Need to create my own traversal graph to hit all room instead of just finding a specified one
+"""
 tg = TraversalGraph(roomGraph)
 path = tg.bfs(player.currentRoom.id)
 print(path)
+"""
+
+traversalPath = []
+"""
+To solve this path, you'll want to construct your own traversal graph. You start in room 0, which contains exits ['n', 's', 'w', 'e']. Your starting graph should look something like this:
+{
+  0: {'n': '?', 's': '?', 'w': '?', 'e': '?'}
+}
+Try moving south and you will find yourself in room 5 which contains exits ['n', 's', 'e']. You can now fill in some entries in your graph:
+
+{
+  0: {'n': '?', 's': 5, 'w': '?', 'e': '?'},
+  5: {'n': 0, 's': '?', 'e': '?'}
+}
+You know you are done when you have exactly 500 entries (0-499) in your graph and no '?' in the adjacency dictionaries. To do this, you will need to write a traversal algorithm that logs the path into traversalPath as it walks.
+"""
+traversalGraph = {}
+
+# WHILE: my traversal graph is shorter then the given room graph [You know you are done when you have exactly 500 entries]
+    # IF: player's current room is not in traversal graph
+        # Add current room to graph with format  0: {'n': '?', 's': '?', 'w': '?', 'e': '?'} for current room's possible directions
+    # FOR: each direction of current room
+        # IF: not yet gone in that direction; i.e. direction is '?'
+            # Add direction to travel path list
+            # Add next room id to current room direction connnections  0: {'n': '?', 's': '5', 'w': '?', 'e': '?'}
+            # Travel in that direction to next room
+            # IF: player's next room is not in traversal graph
+                # Add next room to graph for next room's possible directions 5: {'n': '?, 's': '?', 'e': '?'}
+                # Add prev room id to current room direction connnections5: {'n': 0, 's': '?', 'e': '?'}
+        # Repeat from begining until no more exits
+    # Then back track to last with an unvisited direction; ie room contains '?'
+    # Use BFS function above to find closest room equal to '?' for shortest path
+    # BFS will return the path as a list of room IDs. 
+    # Convert this to a list of n/s/e/w directions
+        # Add direction to travel path list
+
+
+
+
 
 # TRAVERSAL TEST
 visited_rooms = set()
