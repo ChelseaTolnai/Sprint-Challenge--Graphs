@@ -52,19 +52,28 @@ class Queue():
     def size(self):
         return len(self.queue)
 
-def bfs(self, starting_room):
-    queue = Queue()
-    queue.enqueue((starting_room, [starting_room]))
+class TraversalGraph:
+    def __init__(self, traversalGraph):
+        self.traversalGraph = traversalGraph
+            
+    def bfs(self, starting_room):
+        queue = Queue()
+        queue.enqueue((starting_room, [starting_room]))
 
-    while queue.size() > 0:
-        u = queue.dequeue()
+        while queue.size() > 0:
+            u = queue.dequeue()
 
-        for v in self.vertices[u[0]]:
-            path = u[1]+[v]
-            if v == destination_vertex:
-                return path
-            else:
-                queue.enqueue((v, path))
+            for v in self.traversalGraph[u[0]][1]:
+                next_room = self.traversalGraph[u[0]][1][v]
+                path = u[1] + [next_room]
+                if next_room == 221:
+                    return path
+                else:
+                    queue.enqueue((next_room, path))
+
+tg = TraversalGraph(roomGraph)
+path = tg.bfs(player.currentRoom.id)
+print(path)
 
 # TRAVERSAL TEST
 visited_rooms = set()
