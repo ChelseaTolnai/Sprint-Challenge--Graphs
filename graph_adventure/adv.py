@@ -22,7 +22,49 @@ player = Player("Name", world.startingRoom)
 
 # FILL THIS IN
 traversalPath = ['n', 's']
+"""
+To solve this path, you'll want to construct your own traversal graph. You start in room 0, which contains exits ['n', 's', 'w', 'e']. Your starting graph should look something like this:
+{
+  0: {'n': '?', 's': 5, 'w': '?', 'e': '?'},
+  5: {'n': 0, 's': '?', 'e': '?'}
+}
+"""
+traversalGraph = {}
+"""
+You can find the path to the shortest unexplored room by using a breadth-first search for a room with a '?' for an exit. If you use the bfs_path code from the homework, you will need to make a few modifications.
 
+Instead of searching for a target vertex, you are searching for an exit with a '?' as the value. If an exit has been explored, you can put it in your BFS queue like normal.
+
+BFS will return the path as a list of room IDs. You will need to convert this to a list of n/s/e/w directions before you can add it to your traversal path.
+"""
+# Using bfs_path as opposed to depth first search because the final goal is to get the shortest path.
+
+class Queue():
+    def __init__(self):
+        self.queue = []
+    def enqueue(self, value):
+        self.queue.append(value)
+    def dequeue(self):
+        if self.size() > 0:
+            return self.queue.pop(0)
+        else:
+            return None
+    def size(self):
+        return len(self.queue)
+
+def bfs(self, starting_room):
+    queue = Queue()
+    queue.enqueue((starting_room, [starting_room]))
+
+    while queue.size() > 0:
+        u = queue.dequeue()
+
+        for v in self.vertices[u[0]]:
+            path = u[1]+[v]
+            if v == destination_vertex:
+                return path
+            else:
+                queue.enqueue((v, path))
 
 # TRAVERSAL TEST
 visited_rooms = set()
