@@ -51,6 +51,7 @@ class TraversalGraph:
         self.traversalGraph = traversalGraph
             
     def bfs(self, starting_room):
+        # Only works on some random paths
         # queue = Queue()
         # queue.enqueue((starting_room, [starting_room]))
 
@@ -63,7 +64,9 @@ class TraversalGraph:
         #         if next_room == '?':
         #             return u[1]
         #         else:
-        #             queue.enqueue((next_room, path))        
+        #             queue.enqueue((next_room, path))    
+
+        # Fully working bfs on all paths
         queue = Queue()
         queue.enqueue([starting_room])
         explored = set()
@@ -122,26 +125,20 @@ def reverseExit(exit):
 
 # WHILE: my traversal graph is shorter then the given room graph [You know you are done when you have exactly 500 entries]
 while len(TG.traversalGraph) < len(roomGraph):
-    # print(len(TG.traversalGraph), len(roomGraph), len(traversalPath))
-    # print(traversalPath)
-    # print("CR", player.currentRoom.id)
     # IF: player's current room is not in traversal graph
     if player.currentRoom.id not in TG.traversalGraph:
         # Get rooms possible direction, Shuffle possible options, Add current room to graph 
         addExits(player.currentRoom)
-    # print(TG.traversalGraph[player.currentRoom.id])
     # Keep track if deadend hit
     exits = False
     # FOR: each direction of current room
     for exit in TG.traversalGraph[player.currentRoom.id]:
-        # print(exit, TG.traversalGraph[player.currentRoom.id][exit])
         # IF: not yet gone in that direction; i.e. direction is '?'
         if TG.traversalGraph[player.currentRoom.id][exit] == '?':
             # confirms not in deadend
             exits = True
             # Add direction to travel path list
             traversalPath.append(exit)
-            # print(traversalPath)
             # Add next room id to current room direction connnections  0: {'n': '?', 's': '5', 'w': '?', 'e': '?'}
             TG.traversalGraph[player.currentRoom.id][exit] = player.currentRoom.getRoomInDirection(exit).id
             # Travel in that direction to next room
@@ -158,39 +155,21 @@ while len(TG.traversalGraph) < len(roomGraph):
             # Repeat from begining until no more exits
     # Then back track to last with an unvisited direction; ie room contains '?'
     if exits == False:
-        # print("hit")
-        # print(player.currentRoom.id)
         # Use BFS function above to find closest room equal to '?' for shortest path
         path = TG.bfs(player.currentRoom.id)
-        # print("PATH", path)
         # BFS will return the path as a list of room IDs. 
         path.pop(0)
-        # print(TG.traversalGraph)
-        # print(player.currentRoom.id)
-        # print("**", traversalPath)
-        # print("****", path)
         # Convert this to a list of n/s/e/w directions
         for roomID in path:
             # FOR: each direction of current room
-            # print("1", player.currentRoom.id, TG.traversalGraph[player.currentRoom.id])
             for exit in TG.traversalGraph[player.currentRoom.id]:
-                # print("2", player.currentRoom.id, TG.traversalGraph[player.currentRoom.id], exit)
                 # IF: direction will take me to room in path
                 if TG.traversalGraph[player.currentRoom.id][exit] == roomID:
                     # Add direction to travel path list
                     traversalPath.append(exit)
                     # Travel in that direction to next room
                     player.travel(exit)
-                    # print(traversalPath)
-                    # print(len(traversalPath))
-                    # print(TG.traversalGraph)
-                    # print(len(TG.traversalGraph))
                     break
-
-# print(traversalPath)
-# print(len(traversalPath))
-# print(TG.traversalGraph)
-# print(len(TG.traversalGraph))
 
 
 # TRAVERSAL TEST
