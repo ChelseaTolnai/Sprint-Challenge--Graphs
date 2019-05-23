@@ -51,20 +51,36 @@ class TraversalGraph:
         self.traversalGraph = traversalGraph
             
     def bfs(self, starting_room):
+        # queue = Queue()
+        # queue.enqueue((starting_room, [starting_room]))
+
+        # while queue.size() > 0:
+        #     u = queue.dequeue()
+
+        #     for v in self.traversalGraph[u[0]]:
+        #         next_room = self.traversalGraph[u[0]][v]
+        #         path = u[1] + [next_room]
+        #         if next_room == '?':
+        #             return u[1]
+        #         else:
+        #             queue.enqueue((next_room, path))        
         queue = Queue()
-        queue.enqueue((starting_room, [starting_room]))
+        queue.enqueue([starting_room])
+        explored = set()
 
         while queue.size() > 0:
-            u = queue.dequeue()
+            path = queue.dequeue()
+            path_room = path[-1]
 
-            for v in self.traversalGraph[u[0]]:
-                next_room = self.traversalGraph[u[0]][v]
-                path = u[1] + [next_room]
-                if next_room == '?':
-                    return u[1]
-                else:
-                    queue.enqueue((next_room, path))        
-
+            if path_room not in explored:
+                explored.add(path_room)
+                for exit in self.traversalGraph[path_room]:
+                    if self.traversalGraph[path_room][exit] == '?':
+                        return path
+                for v in self.traversalGraph[path_room]:
+                    next_room = self.traversalGraph[path_room][v]
+                    new_path = path + [next_room]
+                    queue.enqueue(new_path)        
 
 traversalPath = []
 
@@ -89,7 +105,7 @@ def addExits(room):
     # Get rooms possible direction ==> ['n', 's', 'w', 'e']
     exits = room.getExits()
     # Shuffle possible options to try to get random path each time to see if we can get a better path ==> ['e', 'w', 'n', 's']
-    # random.shuffle(exits)
+    random.shuffle(exits)
     # Add current room to graph with format  0: {'e': '?', 'w': '?', 'n': '?', 's': '?'} for current room's possible directions
     TG.traversalGraph[room.id] = {exit: '?' for exit in exits}
 
@@ -185,7 +201,7 @@ for move in traversalPath:
     player.travel(move)
     visited_rooms.add(player.currentRoom)
 
-if len(traversalPath) < 991:
+if len(traversalPath) < 979:
     print(traversalPath)
 
 if len(visited_rooms) == len(roomGraph):
