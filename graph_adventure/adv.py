@@ -63,18 +63,11 @@ class TraversalGraph:
                 if next_room == '?':
                     return u[1]
                 else:
-                    queue.enqueue((next_room, path))
-        
+                    queue.enqueue((next_room, path))        
 
-
-# Testing bfs functionality with givien roomGraph. Need to create my own traversal graph to hit all room instead of just finding a specified one
-"""
-tg = TraversalGraph(roomGraph)
-path = tg.bfs(player.currentRoom.id)
-print(path)
-"""
 
 traversalPath = []
+
 """
 To solve this path, you'll want to construct your own traversal graph. You start in room 0, which contains exits ['n', 's', 'w', 'e']. Your starting graph should look something like this:
 {
@@ -96,7 +89,7 @@ def addExits(room):
     # Get rooms possible direction ==> ['n', 's', 'w', 'e']
     exits = room.getExits()
     # Shuffle possible options to try to get random path each time to see if we can get a better path ==> ['e', 'w', 'n', 's']
-    random.shuffle(exits)
+    # random.shuffle(exits)
     # Add current room to graph with format  0: {'e': '?', 'w': '?', 'n': '?', 's': '?'} for current room's possible directions
     TG.traversalGraph[room.id] = {exit: '?' for exit in exits}
 
@@ -113,9 +106,6 @@ def reverseExit(exit):
 
 # WHILE: my traversal graph is shorter then the given room graph [You know you are done when you have exactly 500 entries]
 while len(TG.traversalGraph) < len(roomGraph):
-# count = 0
-# while count < 20:
-#     count += 1
     # print(len(TG.traversalGraph), len(roomGraph), len(traversalPath))
     # print(traversalPath)
     # print("CR", player.currentRoom.id)
@@ -152,8 +142,11 @@ while len(TG.traversalGraph) < len(roomGraph):
             # Repeat from begining until no more exits
     # Then back track to last with an unvisited direction; ie room contains '?'
     if exits == False:
+        # print("hit")
+        # print(player.currentRoom.id)
         # Use BFS function above to find closest room equal to '?' for shortest path
         path = TG.bfs(player.currentRoom.id)
+        # print("PATH", path)
         # BFS will return the path as a list of room IDs. 
         path.pop(0)
         # print(TG.traversalGraph)
@@ -191,6 +184,9 @@ visited_rooms.add(player.currentRoom)
 for move in traversalPath:
     player.travel(move)
     visited_rooms.add(player.currentRoom)
+
+if len(traversalPath) < 991:
+    print(traversalPath)
 
 if len(visited_rooms) == len(roomGraph):
     print(f"TESTS PASSED: {len(traversalPath)} moves, {len(visited_rooms)} rooms visited")
